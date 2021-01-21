@@ -14126,7 +14126,7 @@ async function run() {
     //
     const SPACE_ID = process.env.SPACE_ID;
     const MANAGEMENT_API_KEY = process.env.MANAGEMENT_API_KEY;
-    const SOURCE_ENV_INPUT = process.env.SOURCE_ENV_ID;
+    const SOURCE_ENV_INPUT = process.env.SOURCE_ENV_INPUT;
 
     const ENVIRONMENT_INPUT = getBranchName();
 
