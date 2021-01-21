@@ -40,6 +40,7 @@ async function run() {
     //
     const SPACE_ID = process.env.SPACE_ID;
     const MANAGEMENT_API_KEY = process.env.MANAGEMENT_API_KEY;
+    const SOURCE_ENV_INPUT = process.env.SOURCE_ENV_ID;
 
     const ENVIRONMENT_INPUT = getBranchName();
 
@@ -66,6 +67,14 @@ async function run() {
     console.log(`ENVIRONMENT_ID: ${ENVIRONMENT_ID}`);
 
     // ---------------------------------------------------------------------------
+    if (!SOURCE_ENV_INPUT){
+      SOURCE_ENV_ID = 'master';
+    }else{
+      SOURCE_ENV_ID = SOURCE_ENV_INPUT;
+    }
+    console.log(`SOURCE_ENV_ID: ${SOURCE_ENV_ID}`);
+
+    // ---------------------------------------------------------------------------
 
     console.log(`Checking for existing versions of environment: ${ENVIRONMENT_ID}`);
 
@@ -81,8 +90,9 @@ async function run() {
 
     // ---------------------------------------------------------------------------
     if (ENVIRONMENT_ID != 'master'){
-      console.log(`Creating environment ${ENVIRONMENT_ID}`);
-      environment = await space.createEnvironmentWithId(ENVIRONMENT_ID, { name: ENVIRONMENT_ID });
+      console.log(`Creating environment ${ENVIRONMENT_ID} from ${SOURCE_ENV_ID}`);
+
+      environment = await space.createEnvironmentWithId(ENVIRONMENT_ID, { name: ENVIRONMENT_ID }, SOURCE_ENV_ID);
     }
     // ---------------------------------------------------------------------------
     const DELAY = 3000;
