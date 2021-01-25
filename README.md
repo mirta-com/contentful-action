@@ -4,7 +4,7 @@ An action for running migration scripts against a Contentful CLI. To learn about
 
 ## How it works
 
-If `TARGET_ENV_ID` is set, then the migration will run on the target environment: in case the target environment does not exist, it will be create; no aliases will be moved.
+If `TARGET_ENV_ID` is set, then the migration will run on the target environment: the environment must already exists; no aliases will be moved.
 
 If `TARGET_ENV_ID` is not set, then:
 
