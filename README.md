@@ -4,11 +4,15 @@ An action for running migration scripts against a Contentful CLI. To learn about
 
 ## How it works
 
-When launched in a feature branch, it will create a new environment from `SOURCE_ENV` Contentful environment. If the Contentful environment for the feature branch already exists, then it will delete it and create it again from the source environment.
+If `TARGET_ENV_ID` is set, then the migration will run on the target environment: in case the target environment does not exist, it will be create; no aliases will be moved.
 
-When launched in `DEV_BRANCH` branch, it will execute missing migration on Contentful environment `DEV_ENV`. If the Contentful environment does not exist, it will be created.
+If `TARGET_ENV_ID` is not set, then:
 
-When launched in `PROD_BRANCH` branch, it will create a new Contentful environment from `master` named with `master-<the current date>`, executes the migrations, then moves the Contentful environment alias to this new environment.
+- when launched in a feature branch, it will create a new environment from `SOURCE_ENV` Contentful environment. If the Contentful environment for the feature branch already exists, then it will delete it and create it again from the source environment
+
+- when launched in `DEV_BRANCH` branch, it will execute missing migration on Contentful environment `DEV_ENV`. If the Contentful environment does not exist, it will be created
+
+- when launched in `PROD_BRANCH` branch, it will create a new Contentful environment from `master` named with `master-<the current date>`, executes the migrations, then moves the Contentful environment alias to this new environment
 
 ## Usage
 
@@ -54,6 +58,10 @@ Lastly you'll need to update your workflow file to use this action and update th
 ### `MIGRATIONS_DIR`
 
 Repositorie's folder containing all the migrations. Default `migration`.
+
+### `TARGET_ENV_ID`
+
+Contentful's environment id where to run migrations. Default `null`.
 
 ### `SOURCE_ENV`
 
