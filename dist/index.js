@@ -14136,10 +14136,11 @@ async function run() {
     //
     const SPACE_ID = process.env.SPACE_ID;
     const MANAGEMENT_API_KEY = process.env.MANAGEMENT_API_KEY;
-    const SOURCE_ENV_ID = process.env.SOURCE_ENV || 'master';
-    const PROD_BRANCH = cleanBranchName(process.env.PROD_BRANCH || 'production');
-    const DEV_BRANCH = cleanBranchName(process.env.DEV_BRANCH || 'develop');
-    const DEV_ENV = process.env.DEV_ENV || 'dev';
+    const SOURCE_ENV_ID = process.env.SOURCE_ENV_ID || 'master';
+    const GH_PROD_BRANCH = cleanBranchName(process.env.GH_PROD_BRANCH || 'production');
+    const GH_DEV_BRANCH = cleanBranchName(process.env.GH_DEV_BRANCH || 'develop');
+    const DEV_ENV_ID = process.env.DEV_ENV_ID || 'dev';
+    const TARGET_ENV_ID = process.env.TARGET_ENV_ID || null;
 
     const ENVIRONMENT_INPUT = getBranchName();
 
@@ -14156,15 +14157,19 @@ async function run() {
     let environment;
     console.log('Running with the following configuration');
     // ---------------------------------------------------------------------------
-    if (ENVIRONMENT_INPUT == PROD_BRANCH){
+    if (ENVIRONMENT_INPUT == GH_PROD_BRANCH){
       console.log(`Running on master.`);
       ENVIRONMENT_ID = "master-".concat(getStringDate());
-    }else if(ENVIRONMENT_INPUT == DEV_BRANCH){
+    }else if(ENVIRONMENT_INPUT == GH_DEV_BRANCH){
       console.log('Running on development branch');
-      ENVIRONMENT_ID = DEV_ENV;
+      ENVIRONMENT_ID = DEV_ENV_ID;
     }else{
       console.log('Running on feature branch');
       ENVIRONMENT_ID = "GH-".concat(ENVIRONMENT_INPUT);
+    }
+    if(TARGET_ENV_ID){
+      console.log('Running to target env');
+      ENVIRONMENT_ID = TARGET_ENV_ID;
     }
     console.log(`ENVIRONMENT_ID: ${ENVIRONMENT_ID}`);
 
@@ -14177,7 +14182,7 @@ async function run() {
 
     try {
       environment = await space.getEnvironment(ENVIRONMENT_ID);
-      if (ENVIRONMENT_INPUT != PROD_BRANCH && ENVIRONMENT_INPUT != DEV_BRANCH){
+      if (!TARGET_ENV_ID && ENVIRONMENT_INPUT != GH_PROD_BRANCH && ENVIRONMENT_INPUT != GH_DEV_BRANCH){
         await environment.delete();
         console.log('Environment deleted');
       }
@@ -14186,8 +14191,8 @@ async function run() {
     }
 
     // ---------------------------------------------------------------------------
-    if (ENVIRONMENT_INPUT != PROD_BRANCH && ENVIRONMENT_INPUT != DEV_BRANCH){
-      console.log(`Creating environment ${ENVIRONMENT_ID} from ${SOURCE_ENV_ID}`);
+    if (ENVIRONMENT_INPUT != GH_PROD_BRANCH && ENVIRONMENT_INPUT != GH_DEV_BRANCH){
+      console.log(`Getting or creating environment ${ENVIRONMENT_ID} from ${SOURCE_ENV_ID}`);
 
       environment = await space.createEnvironmentWithId(ENVIRONMENT_ID, { name: ENVIRONMENT_ID }, SOURCE_ENV_ID);
     }
@@ -14294,7 +14299,7 @@ async function run() {
 
     // ---------------------------------------------------------------------------
     console.log('Checking if we need to update master alias');
-    if (ENVIRONMENT_INPUT == PROD_BRANCH){
+    if (!TARGET_ENV_ID && ENVIRONMENT_INPUT == GH_PROD_BRANCH){
       console.log(`Running on master.`);
       console.log(`Updating master alias.`);
       await space.getEnvironmentAlias('master')
