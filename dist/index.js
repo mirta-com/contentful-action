@@ -14191,7 +14191,7 @@ async function run() {
     }
 
     // ---------------------------------------------------------------------------
-    if (ENVIRONMENT_INPUT != GH_PROD_BRANCH && ENVIRONMENT_INPUT != GH_DEV_BRANCH){
+    if (!TARGET_ENV_ID && ENVIRONMENT_INPUT != GH_PROD_BRANCH && ENVIRONMENT_INPUT != GH_DEV_BRANCH){
       console.log(`Getting or creating environment ${ENVIRONMENT_ID} from ${SOURCE_ENV_ID}`);
 
       environment = await space.createEnvironmentWithId(ENVIRONMENT_ID, { name: ENVIRONMENT_ID }, SOURCE_ENV_ID);
